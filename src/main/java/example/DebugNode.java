@@ -23,11 +23,15 @@ public class DebugNode<T> extends Node<T, T> {
     @Override
     public T execute(T data, State state, Action action) {
         if(data instanceof Collection) {
-            ((Collection<T>) data).stream().forEach(d -> System.out.println(method.apply(d)));
+            ((Collection<T>) data).stream().forEach(d -> print(method.apply(d)));
         } else {
-            System.out.println(method.apply(data));
+            print(method.apply(data));
         }
 
         return data;
+    }
+
+    private void print(String s) {
+        System.out.println(String.format("%s: %s", getClass().getSimpleName(), s));
     }
 }

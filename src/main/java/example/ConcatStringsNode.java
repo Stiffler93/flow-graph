@@ -33,7 +33,7 @@ public class ConcatStringsNode extends Node<List<String>, String> {
 
     @Override
     public boolean stop() {
-        return counter >= 10;
+        return counter >= 100;
     }
 
     @Override

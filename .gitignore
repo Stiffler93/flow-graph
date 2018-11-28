@@ -1,2 +1,6 @@
 build
 .idea
+flow-graph.iml
+.gradle
+out
+

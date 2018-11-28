@@ -24,14 +24,14 @@ public class Main {
         debugNode2.then(concatNode);
 
         List<String> input = Arrays.asList("A", "B", "C", "AB");
-        Graph.start(concatNode, input);
+        Graph.start(concatNode).input(input).parallel(4).run();
 
-        Graph.clean(concatNode);
-
-        debugNode1.remove("SplitStringNode");
-
-        List<String> input2 = Arrays.asList("Machen", "Buhu", "C", "Halleluja");
-        Graph.start(concatNode, input2);
+//        Graph.clean(concatNode);
+//
+//        debugNode1.remove("SplitStringNode");
+//
+//        List<String> input2 = Arrays.asList("Machen", "Buhu", "C", "Halleluja");
+//        Graph.start(concatNode, input2);
 
     }
 }
