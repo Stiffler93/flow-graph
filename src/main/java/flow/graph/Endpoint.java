@@ -1,6 +1,5 @@
 package flow.graph;
 
-import flow.Action;
 import flow.states.State;
 
 public abstract class Endpoint<T, V> extends Node<T, V>{

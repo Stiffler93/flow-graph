@@ -4,7 +4,7 @@ public interface TaskQueue {
 
     Task<?> getTask() throws InterruptedException;
 
-    void addTask(Task<?> task) throws InterruptedException;
+    void addTask(Task<?> task);
 
-    boolean isEmpty();
+    void triggerExecution();
 }

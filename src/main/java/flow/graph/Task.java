@@ -15,7 +15,7 @@ public class Task<T> {
     private Action action;
     private Trigger<T> trigger;
 
-    private Task(T inputData, Action action, Trigger<T> trigger) {
+    Task(T inputData, Action action, Trigger<T> trigger) {
         uuid = UUID.randomUUID();
         logger.finer(String.format("Created: %s(\"%s\", input: %s).", getClass().getSimpleName(), uuid.toString(), inputData.getClass().getSimpleName()));
 

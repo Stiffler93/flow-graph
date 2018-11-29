@@ -20,12 +20,10 @@ public class Graph<T> implements Runnable {
     private Class<? extends TaskQueue> taskQueueClass = TaskQueueImpl.class;
     private TaskQueue taskQueue;
     private Class<? extends Executor> executorClass = ExecutorImpl.class;
-    private List<Executor> executors;
 
     private Graph(Node<T, ?> startNode) {
         this.startNode = startNode;
         action = new DefaultAction();
-        executors = new ArrayList<>();
     }
 
     public Graph<T> input(T input) {
@@ -67,35 +65,19 @@ public class Graph<T> implements Runnable {
         }
 
         try {
-            Constructor constructor = taskQueueClass.getConstructor();
-            taskQueue = (TaskQueue) constructor.newInstance();
+            Constructor constructor = taskQueueClass.getConstructor(Class.class, int.class);
+            taskQueue = (TaskQueue) constructor.newInstance(executorClass, numExecutors);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             logger.severe(e.getStackTrace().toString());
             throw new IllegalStateException("Initialization of TaskQueue failed!");
         }
 
-        try {
-            Constructor constructor = executorClass.getConstructor(new Class[]{TaskQueue.class});
-            for (int i = 0; i < numExecutors; i++) {
-                executors.add((Executor) constructor.newInstance(taskQueue));
-            }
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            logger.severe(e.getStackTrace().toString());
-            throw new IllegalStateException("Initialization of Executor failed!");
-        }
-
         List<Task<?>> tasks = startNode.trigger(input, action);
         for (Task<?> task : tasks) {
-            try {
-                taskQueue.addTask(task);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            taskQueue.addTask(task);
         }
 
-        for (Executor executor : executors) {
-            new Thread(executor).start();
-        }
+        taskQueue.triggerExecution();
     }
 
     public void clean() {
