@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'flow-graph'
+group 'java-declarative'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
@@ -18,7 +18,7 @@ dependencies {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'dict.Main'
+                'Main-Class': 'main.Main'
         )
     }
 }
