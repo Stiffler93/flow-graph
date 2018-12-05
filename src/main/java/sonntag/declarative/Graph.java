@@ -1,46 +1,56 @@
 package sonntag.declarative;
 
+import sonntag.declarative.states.State;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
-public final class Graph<T> implements Runnable {
+public final class Graph<T, V> extends AbstractNode<T, V> implements Runnable {
 
     private static Logger logger = Logger.getLogger(Graph.class.getName());
 
     private int numExecutors = 1;
     private Node<T, ?> startNode;
+    private Node<?, V> endNode;
     private T input;
     private Class<? extends TaskQueue> taskQueueClass = TaskQueueImpl.class;
     private TaskQueue taskQueue;
     private Class<? extends Executor> executorClass = ExecutorImpl.class;
 
     private Graph(Node<T, ?> startNode) {
+        super("Graph_" + UUID.randomUUID().toString());
         this.startNode = startNode;
     }
 
-    public Graph<T> input(T input) {
+    public Graph<T, V> input(T input) {
         this.input = input;
         return this;
     }
 
-    public Graph<T> parallel(int numExecutors) {
+    public Graph<T, V> parallel(int numExecutors) {
         this.numExecutors = numExecutors;
         return this;
     }
 
-    public Graph<T> asQueue(Class<? extends TaskQueue> taskQueueClass) {
+    public Graph<T, V> asQueue(Class<? extends TaskQueue> taskQueueClass) {
         this.taskQueueClass = taskQueueClass;
         return this;
     }
 
-    public Graph<T> asExecutor(Class<? extends Executor> executorClass) {
+    public Graph<T, V> asExecutor(Class<? extends Executor> executorClass) {
         this.executorClass = executorClass;
         return this;
     }
 
-    public static <T> Graph<T> start(Node<T, ?> startNode) {
+    public Graph<T, V> atLast(Node<?, V> endNode) {
+        this.endNode = endNode;
+        return this;
+    }
+
+    public static <T, V> Graph<T, V> start(Node<T, ?> startNode) {
         return new Graph<>(startNode);
     }
 
@@ -61,16 +71,21 @@ public final class Graph<T> implements Runnable {
             throw new IllegalStateException("Initialization of TaskQueue failed!");
         }
 
-        List<Task<?>> tasks = startNode.trigger(input);
-        for (Task<?> task : tasks) {
-            taskQueue.addTask(task);
+        taskQueue.addTask(Task.of(input, startNode::trigger));
+
+        if (endNode != null) {
+            taskQueue.onFinished(endNode);
         }
 
         taskQueue.triggerExecution();
     }
 
-    public void clean() {
-        startNode.clean();
+    @Override
+    protected V execute(T data, State state) {
+        this.input = data;
+        run();
+
+        return null;
     }
 
 }

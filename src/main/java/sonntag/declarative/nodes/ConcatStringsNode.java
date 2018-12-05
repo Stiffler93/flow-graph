@@ -6,7 +6,7 @@ import sonntag.declarative.states.State;
 
 import java.util.List;
 
-public class ConcatStringsNode extends AbstractNode<List<String>, String> {
+public final class ConcatStringsNode extends AbstractNode<List<String>, String> {
 
     public ConcatStringsNode(String id) {
         super(id);

@@ -6,5 +6,7 @@ public interface TaskQueue {
 
     void addTask(Task<?> task);
 
+    TaskQueue onFinished(Node<?, ?> node);
+
     void triggerExecution();
 }

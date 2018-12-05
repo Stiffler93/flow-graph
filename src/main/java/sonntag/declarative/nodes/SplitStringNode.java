@@ -6,7 +6,7 @@ import sonntag.declarative.states.State;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SplitStringNode extends AbstractNode<String, List<String>> {
+public final class SplitStringNode extends AbstractNode<String, List<String>> {
 
     private int chunkSize = 1;
 

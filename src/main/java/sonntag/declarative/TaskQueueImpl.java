@@ -16,6 +16,8 @@ class TaskQueueImpl implements TaskQueue {
 
     private Queue<Task<?>> queue;
     private List<Executor> executors;
+    private Node<?, ?> finalNode;
+    private Task<?> lastProcessedTask;
 
     private boolean isExecuting = false;
     private final int numExecutors;
@@ -72,7 +74,7 @@ class TaskQueueImpl implements TaskQueue {
             }
 
             logger.fine(String.format("%s: Retrieve element.", Thread.currentThread().getName()));
-            task = queue.poll();
+            lastProcessedTask = task = queue.poll();
         } finally {
             lock.unlock();
         }
@@ -85,7 +87,7 @@ class TaskQueueImpl implements TaskQueue {
     }
 
     private boolean stopConditionMet() {
-        return numThreadsWaiting + 1 == numExecutors;
+        return queue.isEmpty() && numThreadsWaiting + 1 == numExecutors;
     }
 
     private void shutdown() {
@@ -93,7 +95,13 @@ class TaskQueueImpl implements TaskQueue {
             executor.prepareShutdown();
         }
 
-        for (int i = 0; i < numExecutors; i++) {
+        int taskCreated = 0;
+        if(finalNode != null && lastProcessedTask != null) {
+            queue.offer(Task.of(lastProcessedTask, finalNode));
+            taskCreated = 1;
+        }
+
+        for (int i = 0; i < numExecutors - taskCreated; i++) {
             queue.offer(new EmptyTask());
         }
 
@@ -114,6 +122,12 @@ class TaskQueueImpl implements TaskQueue {
             logger.fine(String.format("%s: %d tasks in taskQueue.", Thread.currentThread().getName(), queue.size()));
             lock.unlock();
         }
+    }
+
+    @Override
+    public TaskQueue onFinished(Node<?, ?> node) {
+        this.finalNode = node;
+        return this;
     }
 
     @Override

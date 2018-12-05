@@ -13,9 +13,9 @@ public abstract class AbstractNode<T, V> implements Node<T, V> {
 
     private static Logger logger = Logger.getLogger(AbstractNode.class.getName());
 
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
     private final String ID;
-    private List<NodeConnection<V>> nodeConnections;
+    private final List<NodeConnection<V>> nodeConnections;
     private State state;
 
     public AbstractNode(String id) {
@@ -74,6 +74,8 @@ public abstract class AbstractNode<T, V> implements Node<T, V> {
             state = newState;
 
         V result = execute(data, state);
+        if(result == null)
+            return new ArrayList<>();
 
         return forward(result);
     }

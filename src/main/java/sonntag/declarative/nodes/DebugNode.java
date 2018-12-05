@@ -6,7 +6,7 @@ import sonntag.declarative.states.State;
 import java.util.Collection;
 import java.util.function.Function;
 
-public class DebugNode<T> extends AbstractNode<T, T> {
+public final class DebugNode<T> extends AbstractNode<T, T> {
 
     private Function<T, String> method;
 
