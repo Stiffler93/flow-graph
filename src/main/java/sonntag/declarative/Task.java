@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public final class Task<T> {
+public /*final*/ class Task<T, V> {
 
     private static Logger logger = Logger.getLogger(Task.class.getName());
 
@@ -23,8 +23,9 @@ public final class Task<T> {
     }
 
     // create a wrapper class and return not only the Task list, but also the output/result of the executed task
-    List<Task<?>> execute() {
+    List<Task<?, ?>> execute() {
         logger.finer(String.format("Execute: %s(\"%s\", input: %s).", getClass().getSimpleName(), uuid.toString(), inputData.getClass().getSimpleName()));
+//        throw new UnsupportedOperationException("Take care of this generic!");
         return trigger.trigger(inputData);
     }
 
@@ -32,23 +33,25 @@ public final class Task<T> {
         return result;
     }
 
-    static <T>Task of(T inputData, Trigger<T> trigger) {
-        return new Task(inputData, trigger);
+    static <T, V> Task<T, V> of(T inputData, Trigger<T> trigger) {
+        return new Task<T, V>(inputData, trigger);
     }
 
-    static <T>Task of(Task<T> task, Trigger trigger) { return new Task(task.inputData, trigger); }
+    static <T, V> Task<T, V> of(Task<T, V> task, Trigger<T> trigger) {
+        return new Task<>(task.inputData, trigger);
+    }
 
 
     static final class TaskResult<V> {
 
         private final V result;
-        private final List<Task<?>> tasks;
+        private final List<Task<V, ?>> tasks;
 
         public TaskResult(V result) {
             this(result, new ArrayList<>());
         }
 
-        public TaskResult(V result, List<Task<?>> tasks) {
+        public TaskResult(V result, List<Task<V, ?>> tasks) {
             this.result = result;
             this.tasks = tasks;
         }

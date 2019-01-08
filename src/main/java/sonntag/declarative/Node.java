@@ -17,7 +17,7 @@ public interface Node<T, V> extends Trigger<T> {
 
     boolean remove(String id);
 
-    List<Task<?>> trigger(T data);
+//    List<Task<?, ?>> trigger(T data);
 
     void clean();
 }

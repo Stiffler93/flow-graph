@@ -14,10 +14,10 @@ class TaskQueueImpl implements TaskQueue {
 
     private static Logger logger = Logger.getLogger(TaskQueueImpl.class.getName());
 
-    private Queue<Task<?>> queue;
+    private Queue<Task<?, ?>> queue;
     private List<Executor> executors;
     private Node<?, ?> finalNode;
-    private Task<?> lastProcessedTask;
+    private Task<?, ?> lastProcessedTask;
 
     private boolean isExecuting = false;
     private final int numExecutors;
@@ -54,10 +54,10 @@ class TaskQueueImpl implements TaskQueue {
     }
 
     @Override
-    public Task<?> getTask() throws InterruptedException {
+    public Task<?, ?> getTask() throws InterruptedException {
         lock.lock();
 
-        Task<?> task;
+        Task<?, ?> task;
 
         try {
 
@@ -97,7 +97,7 @@ class TaskQueueImpl implements TaskQueue {
 
         int taskCreated = 0;
         if(finalNode != null && lastProcessedTask != null) {
-            queue.offer(Task.of(lastProcessedTask, finalNode));
+            queue.offer(Task.<String, Void>of(/*(Task)*/ lastProcessedTask, finalNode));
             taskCreated = 1;
         }
 
@@ -109,7 +109,7 @@ class TaskQueueImpl implements TaskQueue {
     }
 
     @Override
-    public void addTask(Task<?> task) {
+    public void addTask(Task<?, ?> task) {
         lock.lock();
 
         try {

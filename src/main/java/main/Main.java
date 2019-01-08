@@ -34,6 +34,7 @@ public class Main {
         concatNode.then(debugNode1);
         debugNode1.then(splitNode);
         splitNode.then(debugNode2);
+        debugNode2.then(concatNode);
 
         List<String> input = Arrays.asList("A", "B", "C", "AB");
         Graph.start(concatNode).input(input).parallel(4).run();

@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface Trigger<T> {
 
-    List<Task<?>> trigger(T data);
+    List<Task<?, ?>> trigger(T data);
 }

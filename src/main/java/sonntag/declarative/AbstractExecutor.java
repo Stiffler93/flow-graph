@@ -28,10 +28,10 @@ public abstract class AbstractExecutor implements Executor {
         while(shallExecute) {
 
             try {
-                Task<?> task = taskQueue.getTask();
-                List<Task<?>> tasks = task.execute();
+                Task<?, ?> task = taskQueue.getTask();
+                List<Task<?, ?>> tasks = task.execute();
 
-                for(Task<?> t : tasks) {
+                for(Task<?, ?> t : tasks) {
                     taskQueue.addTask(t);
                 }
             } catch (InterruptedException e) {

@@ -64,7 +64,7 @@ public abstract class AbstractNode<T, V> implements Node<T, V> {
     }
 
     @Override
-    public final List<Task<?>> trigger(T data) {
+    public final List<Task<?, ?>> trigger(T data) {
         logger.info(String.format("%s-trigger: id=%s, input=%s", getClass().getSimpleName(), getIdentifier(), data.getClass().getSimpleName()));
         if(stop())
             return new ArrayList<>();
@@ -98,11 +98,11 @@ public abstract class AbstractNode<T, V> implements Node<T, V> {
         });
     }
 
-    protected final List<Task<?>> forward(V data) {
-        List<Task<?>> tasks = new ArrayList<>();
+    protected final List<Task<?, ?>> forward(V data) {
+        List<Task<?, ?>> tasks = new ArrayList<>();
         nodeConnections.stream().forEach(c -> {
             if(c.predicate.test(data))
-                tasks.add(Task.of(data, c.node::trigger));
+                tasks.add(Task.of(data, c.node));
         });
 
         logger.info(String.format("%s-forward: %d new tasks created.", getClass().getSimpleName(), tasks.size()));
